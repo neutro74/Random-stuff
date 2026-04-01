@@ -3,20 +3,214 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Random-stuff</title>
+  <meta name="description" content="Random-stuff — notes, experiments, and small projects published on GitHub Pages." />
+  <title>Random-stuff · GitHub Pages</title>
   <style>
-    :root { color-scheme: light dark; }
+    :root {
+      color-scheme: light dark;
+      --bg: #f6f7f9;
+      --surface: #fff;
+      --text: #1a1d23;
+      --muted: #5c6370;
+      --accent: #0969da;
+      --accent-hover: #0550ae;
+      --border: #d1d5db;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+      font-synthesis: none;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1117;
+        --surface: #161b22;
+        --text: #e6edf3;
+        --muted: #8b949e;
+        --accent: #58a6ff;
+        --accent-hover: #79b8ff;
+        --border: #30363d;
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 16px rgba(0, 0, 0, 0.25);
+      }
+    }
+    *,
+    *::before,
+    *::after { box-sizing: border-box; }
     body {
-      font-family: system-ui, sans-serif;
-      line-height: 1.5;
-      max-width: 40rem;
-      margin: 2rem auto;
-      padding: 0 1rem;
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+    }
+    a {
+      color: var(--accent);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.15em;
+    }
+    a:hover { color: var(--accent-hover); }
+    .wrap {
+      max-width: 44rem;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+    header {
+      padding: 2.5rem 0 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+    h1 {
+      font-size: clamp(1.75rem, 4vw, 2.25rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin: 0 0 0.75rem;
+    }
+    .lede {
+      font-size: 1.125rem;
+      color: var(--muted);
+      margin: 0;
+      max-width: 36rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 1.5rem 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+    .card h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0 0 0.75rem;
+      letter-spacing: -0.01em;
+    }
+    .card p { margin: 0 0 0.75rem; }
+    .card p:last-child { margin-bottom: 0; }
+    ul {
+      margin: 0.5rem 0 0;
+      padding-left: 1.25rem;
+    }
+    li { margin: 0.35rem 0; }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.55rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      text-decoration: none;
+    }
+    .btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+      color: #fff;
+    }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+    code {
+      font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.88em;
+      padding: 0.12em 0.35em;
+      border-radius: 4px;
+      background: color-mix(in srgb, var(--border) 45%, transparent);
     }
   </style>
 </head>
 <body>
-  <h1>Random-stuff</h1>
-  <p>Site published with <a href="https://pages.github.com/">GitHub Pages</a>.</p>
+  <div class="wrap">
+    <header>
+      <p class="badge">Public site</p>
+      <h1>Random-stuff</h1>
+      <p class="lede">
+        A lightweight home for experiments, snippets, and small tools. This page is static HTML,
+        served from the <code>docs/</code> folder and deployed automatically when changes land on
+        <code>main</code>.
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://github.com/neutro74/Random-stuff">View on GitHub</a>
+        <a class="btn" href="https://pages.github.com/">About GitHub Pages</a>
+      </div>
+    </header>
+
+    <section class="card" aria-labelledby="about-heading">
+      <h2 id="about-heading">What lives here</h2>
+      <p>
+        The repository is a scratch space: ideas that do not need their own project yet, or
+        content you want versioned and easy to share. The live site you are reading is the
+        public face of that folder—no build step, just HTML and assets checked into
+        <code>docs/</code>.
+      </p>
+      <p>
+        If you add more pages later (for example <code>docs/other.html</code>), link them from here
+        or from a simple navigation block so visitors can find them.
+      </p>
+    </section>
+
+    <section class="card" aria-labelledby="deploy-heading">
+      <h2 id="deploy-heading">How publishing works</h2>
+      <p>
+        GitHub Pages is configured to use <strong>GitHub Actions</strong>. The workflow
+        <code>Deploy GitHub Pages</code> uploads the contents of <code>docs/</code> as the site
+        artifact and deploys it to the <code>github-pages</code> environment.
+      </p>
+      <ul>
+        <li><strong>Trigger:</strong> push to the <code>main</code> branch (or run the workflow manually).</li>
+        <li><strong>Source:</strong> files under <code>docs/</code> in this repository.</li>
+        <li><strong>URL:</strong> <a href="https://neutro74.github.io/Random-stuff/">neutro74.github.io/Random-stuff</a></li>
+      </ul>
+      <p>
+        Avoid adding a second workflow that deploys the repository root unless you add a root
+        <code>index.html</code>; otherwise the site root can end up empty and return 404.
+      </p>
+    </section>
+
+    <section class="card" aria-labelledby="next-heading">
+      <h2 id="next-heading">Ideas for next steps</h2>
+      <ul>
+        <li>Add a <code>docs/style.css</code> and link it for easier theming.</li>
+        <li>Drop images into <code>docs/</code> and reference them with relative paths.</li>
+        <li>Use GitHub’s built-in Markdown rendering in the repo README for long-form notes, and link out from this page.</li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>
+        Built for <a href="https://github.com/neutro74/Random-stuff">neutro74/Random-stuff</a>.
+        Last updated in the repository—see commit history for changes.
+      </p>
+    </footer>
+  </div>
 </body>
 </html>
