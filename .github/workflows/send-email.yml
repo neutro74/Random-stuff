@@ -1,0 +1,49 @@
+name: Send email (SMTP)
+
+# Sends email via SMTP using repo secrets. GitHub Pages cannot send mail by itself;
+# this workflow is the server-side half. Trigger from Actions UI or: gh workflow run "Send email (SMTP)" -f to=... -f subject=... -f body=...
+on:
+  workflow_dispatch:
+    inputs:
+      to:
+        description: Recipient address(es), comma-separated
+        required: true
+        type: string
+      subject:
+        description: Email subject
+        required: true
+        type: string
+      body:
+        description: Plain-text body (use \n for new lines in gh -f)
+        required: true
+        type: string
+      smtp_port:
+        description: SMTP port (465 = SSL, 587 = STARTTLS for many providers)
+        required: false
+        default: "465"
+        type: string
+      secure:
+        description: Use implicit TLS (typical for port 465)
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send mail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_SMTP_HOST }}
+          server_port: ${{ github.event.inputs.smtp_port }}
+          secure: ${{ github.event.inputs.secure == 'true' }}
+          username: ${{ secrets.MAIL_SMTP_USERNAME }}
+          password: ${{ secrets.MAIL_SMTP_PASSWORD }}
+          subject: ${{ github.event.inputs.subject }}
+          to: ${{ github.event.inputs.to }}
+          from: ${{ secrets.MAIL_FROM }}
+          body: ${{ github.event.inputs.body }}

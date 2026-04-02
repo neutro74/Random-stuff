@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Compose email via mailto or trigger SMTP send through GitHub Actions." />
+  <title>Random-stuff · Email</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f6f7f9;
+      --surface: #fff;
+      --text: #1a1d23;
+      --muted: #5c6370;
+      --accent: #0969da;
+      --accent-hover: #0550ae;
+      --border: #d1d5db;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+      font-synthesis: none;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1117;
+        --surface: #161b22;
+        --text: #e6edf3;
+        --muted: #8b949e;
+        --accent: #58a6ff;
+        --accent-hover: #79b8ff;
+        --border: #30363d;
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 16px rgba(0, 0, 0, 0.25);
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+    }
+    a {
+      color: var(--accent);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.15em;
+    }
+    a:hover { color: var(--accent-hover); }
+    .wrap {
+      max-width: 44rem;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+    header {
+      padding: 1.5rem 0 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    h1 {
+      font-size: clamp(1.5rem, 3.5vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.5rem;
+    }
+    .lede {
+      color: var(--muted);
+      margin: 0;
+      font-size: 1rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+    .card h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0 0 0.75rem;
+    }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin: 0.75rem 0 0.35rem;
+    }
+    label:first-of-type { margin-top: 0; }
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      padding: 0.55rem 0.65rem;
+      font: inherit;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+    }
+    textarea {
+      min-height: 8rem;
+      resize: vertical;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.55rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+      color: #fff;
+    }
+    pre, code {
+      font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.82rem;
+    }
+    pre {
+      margin: 0.75rem 0 0;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--border) 35%, transparent);
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .note {
+      font-size: 0.875rem;
+      color: var(--muted);
+      margin: 0.75rem 0 0;
+    }
+    .status {
+      margin-top: 0.75rem;
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+    .status.ok { color: var(--accent); }
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Email</h1>
+      <p class="lede">
+        GitHub Pages only serves static files—it cannot send SMTP mail. This page helps you
+        <strong>open your mail app</strong> with a prefilled message, and builds a
+        <strong>GitHub CLI</strong> command to run the repo’s <em>Send email (SMTP)</em> workflow (after you add secrets once).
+      </p>
+    </header>
+
+    <section class="card" aria-labelledby="mailto-heading">
+      <h2 id="mailto-heading">1. Mail app (mailto)</h2>
+      <p class="note" style="margin-top:0">Uses your device’s default email client. Nothing is sent from GitHub.</p>
+      <label for="m-to">To</label>
+      <input id="m-to" type="email" placeholder="you@example.com" autocomplete="email" />
+      <label for="m-subject">Subject</label>
+      <input id="m-subject" type="text" placeholder="Hello" />
+      <label for="m-body">Body</label>
+      <textarea id="m-body" placeholder="Your message…"></textarea>
+      <div class="row">
+        <button type="button" class="btn btn-primary" id="btn-mailto">Open in mail app</button>
+        <button type="button" class="btn" id="btn-copy-mailto">Copy mailto link</button>
+      </div>
+      <p class="status" id="mailto-status" aria-live="polite"></p>
+    </section>
+
+    <section class="card" aria-labelledby="gh-heading">
+      <h2 id="gh-heading">2. GitHub Actions (SMTP)</h2>
+      <p class="note" style="margin-top:0">
+        One-time: in the repo on GitHub, add these <strong>Actions secrets</strong> (Settings → Secrets and variables → Actions):
+        <code>MAIL_SMTP_HOST</code>, <code>MAIL_SMTP_USERNAME</code>, <code>MAIL_SMTP_PASSWORD</code>,
+        <code>MAIL_FROM</code> (e.g. <code>Your Name &lt;you@domain.com&gt;</code>).
+        For Gmail, use an <a href="https://support.google.com/accounts/answer/185833">App Password</a> and host <code>smtp.gmail.com</code>, port <code>465</code>.
+      </p>
+      <label for="g-to">To</label>
+      <input id="g-to" type="text" placeholder="friend@example.com" />
+      <label for="g-subject">Subject</label>
+      <input id="g-subject" type="text" placeholder="Hello from Actions" />
+      <label for="g-body">Body</label>
+      <textarea id="g-body" placeholder="Plain text. Newlines are fine below."></textarea>
+      <div class="row">
+        <button type="button" class="btn btn-primary" id="btn-copy-gh">Copy gh workflow run command</button>
+        <a class="btn" id="link-actions" href="https://github.com/neutro74/Random-stuff/actions/workflows/send-email.yml">Open workflow in GitHub</a>
+      </div>
+      <pre id="gh-preview" aria-label="Generated command"></pre>
+      <p class="status" id="gh-status" aria-live="polite"></p>
+    </section>
+
+    <footer>
+      <p><a href="./index.html">← Back to home</a></p>
+    </footer>
+  </div>
+  <script>
+    (function () {
+      function esc(s) {
+        return encodeURIComponent(s == null ? "" : String(s));
+      }
+      function shellSingleQuote(s) {
+        return "'" + String(s).replace(/'/g, "'\\''") + "'";
+      }
+
+      var mTo = document.getElementById("m-to");
+      var mSubject = document.getElementById("m-subject");
+      var mBody = document.getElementById("m-body");
+      var mailtoStatus = document.getElementById("mailto-status");
+
+      document.getElementById("btn-mailto").addEventListener("click", function () {
+        var href =
+          "mailto:" +
+          esc(mTo.value.trim()) +
+          "?subject=" +
+          esc(mSubject.value) +
+          "&body=" +
+          esc(mBody.value);
+        window.location.href = href;
+        mailtoStatus.textContent = "If nothing opened, check that a mail app is configured.";
+        mailtoStatus.className = "status ok";
+      });
+
+      document.getElementById("btn-copy-mailto").addEventListener("click", function () {
+        var link =
+          "mailto:" +
+          esc(mTo.value.trim()) +
+          "?subject=" +
+          esc(mSubject.value) +
+          "&body=" +
+          esc(mBody.value);
+        navigator.clipboard.writeText(link).then(
+          function () {
+            mailtoStatus.textContent = "Mailto link copied.";
+            mailtoStatus.className = "status ok";
+          },
+          function () {
+            mailtoStatus.textContent = "Could not copy (clipboard permission).";
+            mailtoStatus.className = "status";
+          }
+        );
+      });
+
+      var gTo = document.getElementById("g-to");
+      var gSubject = document.getElementById("g-subject");
+      var gBody = document.getElementById("g-body");
+      var ghPreview = document.getElementById("gh-preview");
+      var ghStatus = document.getElementById("gh-status");
+
+      function ghCommand() {
+        return (
+          "gh workflow run \"Send email (SMTP)\" -R neutro74/Random-stuff " +
+          "-f to=" +
+          shellSingleQuote(gTo.value.trim()) +
+          " " +
+          "-f subject=" +
+          shellSingleQuote(gSubject.value) +
+          " " +
+          "-f body=" +
+          shellSingleQuote(gBody.value)
+        );
+      }
+
+      function refreshGhPreview() {
+        ghPreview.textContent = ghCommand();
+      }
+
+      ["input", "change"].forEach(function (ev) {
+        gTo.addEventListener(ev, refreshGhPreview);
+        gSubject.addEventListener(ev, refreshGhPreview);
+        gBody.addEventListener(ev, refreshGhPreview);
+      });
+      refreshGhPreview();
+
+      document.getElementById("btn-copy-gh").addEventListener("click", function () {
+        var cmd = ghCommand();
+        navigator.clipboard.writeText(cmd).then(
+          function () {
+            ghStatus.textContent = "Command copied. Run it in a terminal (gh must be logged in).";
+            ghStatus.className = "status ok";
+          },
+          function () {
+            ghStatus.textContent = "Could not copy. Select the command in the box above.";
+            ghStatus.className = "status";
+          }
+        );
+      });
+    })();
+  </script>
+</body>
+</html>
