@@ -1,5 +1,11 @@
 # Random-stuff
 
+## Cursor Discord chatbot prompt
+
+If you want a Cursor Agent to chat in Discord with a specific style/persona, use this copy/paste prompt:
+
+- `docs/discord-cursor-agent-prompt.md`
+
 ## GitHub Pages
 
 The site in `docs/` deploys automatically on push to `main` via [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml).
